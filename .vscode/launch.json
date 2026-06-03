@@ -1,0 +1,29 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Listen for XDebug",
+            "type": "php",
+            "port": 9003,
+            "pathMapping": {
+                "/": "${workspaceFolder}/"
+            }
+        },
+        {
+            "name": "PHP Server",
+            "type": "php",
+            "runtimeArgs": [
+                "-S",
+                "localhost:8000",
+                "-t",
+                "${workspaceFolder}/public"
+            ],
+            "port": 8000,
+            "serverReadyAction": {
+                "pattern": "listening on",
+                "uriFormat": "http://localhost:8000",
+                "action": "openExternally"
+            }
+        }
+    ]
+}

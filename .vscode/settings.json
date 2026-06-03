@@ -1,0 +1,8 @@
+{
+    "php.validate.executablePath": "c:\\laragon\\bin\\php\\php-8.1.10-Win32-vs16-x64\\php.exe",
+    "php.debug.executablePath": "c:\\laragon\\bin\\php\\php-8.1.10-Win32-vs16-x64\\php.exe",
+    "[php]": {
+        "editor.defaultFormatter": "devsense.phptools-vscode",
+        "editor.formatOnSave": false
+    }
+}
