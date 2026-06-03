@@ -1,5 +1,5 @@
 -- Database AmanParkir
--- Sistem Manajemen Tempat Parkir FMIPA
+-- Sistem Manajemen Tempat Parkir Motor FMIPA
 
 -- Create Database
 CREATE DATABASE IF NOT EXISTS amanparkir;
