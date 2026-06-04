@@ -108,3 +108,25 @@ app/views/
 ├── header.php
 └── footer.php
 ```
+
+## Database
+
+Database yang digunakan:
+```php
+amanparkir
+```
+
+Tabel utama:
+```php
+parking_areas
+vehicle_types
+vehicles
+parking_transactions
+activity_logs
+```
+
+Relasi database:
+
+- Satu area parkir memiliki banyak kendaraan.
+- Satu kendaraan memiliki banyak transaksi parkir.
+- Setiap transaksi menyimpan waktu masuk dan keluar kendaraan.
