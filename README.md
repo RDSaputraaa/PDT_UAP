@@ -19,9 +19,11 @@ Penyimpanan waktu masuk secara otomatis.
 Validasi kapasitas area parkir.
 
 Contoh implementasi:
+```php
 $vehicle->plate_number = $_POST['plate_number'];
 $vehicle->owner_name = $_POST['owner_name'];
 $vehicle->area_id = $_POST['area_id'];
 
 $transaction->entry_time = date('Y-m-d H:i:s');
 $transaction->save();
+```
