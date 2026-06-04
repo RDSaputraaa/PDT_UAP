@@ -27,3 +27,82 @@ $vehicle->area_id = $_POST['area_id'];
 $transaction->entry_time = date('Y-m-d H:i:s');
 $transaction->save();
 ```
+
+Registrasi Kendaraan Keluar
+
+Fitur ini digunakan untuk mencatat kendaraan yang meninggalkan area parkir.
+
+Proses yang dilakukan:
+
+Mencari kendaraan berdasarkan nomor plat.
+Menampilkan data parkir aktif.
+Menyimpan waktu keluar secara otomatis.
+Menghitung durasi parkir.
+
+Contoh implementasi:
+```php
+$transaction = ParkingTransaction::findActive($plate_number);
+
+$transaction->exit_time = date('Y-m-d H:i:s');
+$transaction->update();
+```
+
+Dashboard Monitoring
+
+Dashboard menampilkan informasi parkir secara real-time, meliputi:
+
+Total kendaraan aktif.
+Kapasitas area parkir.
+Slot yang tersedia.
+Aktivitas parkir terbaru.
+
+Contoh query:
+```php
+SELECT COUNT(*) AS total_active
+FROM parking_transactions
+WHERE exit_time IS NULL;
+```
+
+Manajemen Area Parkir
+
+Sistem menyediakan pengelolaan beberapa area parkir yang memiliki kapasitas berbeda.
+
+Contoh data:
+| Area | Kapasitas |
+|------|-----------|
+| A | 150 |
+| B | 200 |
+| PASCA | 20 |
+Ketika kapasitas penuh, sistem akan memberikan peringatan dan menolak kendaraan baru untuk area tersebut.
+
+Struktur MVC
+Controller
+
+Mengatur alur logika aplikasi.
+```php
+app/controllers/
+├── HomeController.php
+└── ParkingController.php
+```
+
+Model
+
+Mengelola data dan interaksi database.
+```php
+app/models/
+├── ParkingArea.php
+├── ParkingTransaction.php
+└── Vehicle.php
+```
+
+View
+
+Mengelola tampilan antarmuka pengguna.
+```php
+app/views/
+├── dashboard.php
+├── entry.php
+├── exit.php
+├── header.php
+└── footer.php
+```
