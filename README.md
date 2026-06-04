@@ -1,5 +1,5 @@
-#AmanParkir (Proyek UAP)
-
+AmanParkir (Proyek UAP)
+----------------------------------------------------------------------------------------
 Proyek ini merupakan sistem manajemen parkir berbasis web yang dibangun menggunakan PHP dan MySQL. Tujuannya untuk membantu pengelolaan kendaraan yang masuk dan keluar area parkir FMIPA secara lebih terstruktur dan efisien. Sistem memanfaatkan konsep MVC (Model-View-Controller), transaksi database, serta monitoring kapasitas parkir secara real-time sehingga petugas dapat mengelola area parkir dengan lebih mudah.
 
 #Detail Konsep
