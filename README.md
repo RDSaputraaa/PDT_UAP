@@ -73,6 +73,8 @@ Contoh data:
 | A | 150 |
 | B | 200 |
 | PASCA | 20 |
+
+
 Ketika kapasitas penuh, sistem akan memberikan peringatan dan menolak kendaraan baru untuk area tersebut.
 
 Struktur MVC
