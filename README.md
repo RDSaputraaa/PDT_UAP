@@ -6,7 +6,7 @@ Detail Konsep
 ------------------------------------------------------
 AmanParkir dirancang untuk mempermudah proses pencatatan kendaraan masuk dan keluar serta pemantauan kapasitas area parkir. Sistem terdiri dari beberapa komponen utama yang saling terhubung melalui arsitektur MVC.
 
-Registrasi Kendaraan Masuk
+##Registrasi Kendaraan Masuk
 
 Fitur ini digunakan untuk mencatat kendaraan yang memasuki area parkir.
 
@@ -28,7 +28,7 @@ $transaction->entry_time = date('Y-m-d H:i:s');
 $transaction->save();
 ```
 
-Registrasi Kendaraan Keluar
+##Registrasi Kendaraan Keluar
 
 Fitur ini digunakan untuk mencatat kendaraan yang meninggalkan area parkir.
 
@@ -47,7 +47,7 @@ $transaction->exit_time = date('Y-m-d H:i:s');
 $transaction->update();
 ```
 
-Dashboard Monitoring
+##Dashboard Monitoring
 
 Dashboard menampilkan informasi parkir secara real-time, meliputi:
 
@@ -63,7 +63,7 @@ FROM parking_transactions
 WHERE exit_time IS NULL;
 ```
 
-Manajemen Area Parkir
+##Manajemen Area Parkir
 
 Sistem menyediakan pengelolaan beberapa area parkir yang memiliki kapasitas berbeda.
 
@@ -77,7 +77,7 @@ Contoh data:
 
 Ketika kapasitas penuh, sistem akan memberikan peringatan dan menolak kendaraan baru untuk area tersebut.
 
-Struktur MVC
+##Struktur MVC
 Controller
 
 Mengatur alur logika aplikasi.
