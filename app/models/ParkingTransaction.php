@@ -9,39 +9,94 @@ class ParkingTransaction {
     }
     
     public function recordEntry($vehicle_id, $parking_area_id) {
-        $check = $this->getActiveTransaction($vehicle_id);
-        if ($check) {
-            return array('success' => false, 'message' => 'Kendaraan sudah terdaftar sedang parkir');
+        $maxRetries = 3;
+        $retryCount = 0;
+        
+        while ($retryCount < $maxRetries) {
+            try {
+                // P3: Explicit Transaction
+                $this->conn->begin_transaction();
+                
+                // Cek kendaraan sudah parkir (Lock to prevent deadlock)
+                $check = $this->getActiveTransaction($vehicle_id);
+                if ($check) {
+                    $this->conn->rollback();
+                    return array('success' => false, 'message' => 'Kendaraan sudah terdaftar sedang parkir');
+                }
+                
+                $query = "INSERT INTO " . $this->table . " 
+                          (vehicle_id, parking_area_id, entry_time, is_active)
+                          VALUES (?, ?, NOW(), TRUE)";
+                
+                $stmt = $this->conn->prepare($query);
+                $stmt->bind_param("ii", $vehicle_id, $parking_area_id);
+                
+                if ($stmt->execute()) {
+                    $transaction_id = $this->conn->insert_id;
+                    $this->conn->commit();
+                    return array('success' => true, 'id' => $transaction_id, 'message' => 'Kendaraan berhasil masuk area parkir');
+                } else {
+                    $this->conn->rollback();
+                    return array('success' => false, 'message' => 'Error: ' . $stmt->error);
+                }
+            } catch (Exception $e) {
+                $this->conn->rollback();
+                // P4: Deadlock Management - Retry on deadlock
+                if (strpos($e->getMessage(), 'Deadlock') !== false || strpos($e->getMessage(), '1213') !== false) {
+                    $retryCount++;
+                    if ($retryCount >= $maxRetries) {
+                        return array('success' => false, 'message' => 'Deadlock terdeteksi. Silakan coba lagi.');
+                    }
+                    usleep(100000 * $retryCount); // Exponential backoff
+                } else {
+                    return array('success' => false, 'message' => 'Error: ' . $e->getMessage());
+                }
+            }
         }
         
-        $query = "INSERT INTO " . $this->table . " 
-                  (vehicle_id, parking_area_id, entry_time, is_active)
-                  VALUES (?, ?, NOW(), TRUE)";
-        
-        $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("ii", $vehicle_id, $parking_area_id);
-        
-        if ($stmt->execute()) {
-            return array('success' => true, 'id' => $this->conn->insert_id, 'message' => 'Kendaraan berhasil masuk area parkir');
-        } else {
-            return array('success' => false, 'message' => 'Error: ' . $stmt->error);
-        }
+        return array('success' => false, 'message' => 'Gagal setelah ' . $maxRetries . ' percobaan');
     }
     
     public function recordExit($vehicle_id, $parking_area_id) {
-        $query = "UPDATE " . $this->table . " 
-                  SET exit_time = NOW(), is_active = FALSE,
-                      duration_minutes = TIMESTAMPDIFF(MINUTE, entry_time, NOW())
-                  WHERE vehicle_id = ? AND parking_area_id = ? AND is_active = TRUE";
+        $maxRetries = 3;
+        $retryCount = 0;
         
-        $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("ii", $vehicle_id, $parking_area_id);
-        
-        if ($stmt->execute()) {
-            return array('success' => true, 'message' => 'Kendaraan berhasil keluar dari area parkir');
-        } else {
-            return array('success' => false, 'message' => 'Error: ' . $stmt->error);
+        while ($retryCount < $maxRetries) {
+            try {
+                // P3: Explicit Transaction
+                $this->conn->begin_transaction();
+                
+                $query = "UPDATE " . $this->table . " 
+                          SET exit_time = NOW(), is_active = FALSE,
+                              duration_minutes = TIMESTAMPDIFF(MINUTE, entry_time, NOW())
+                          WHERE vehicle_id = ? AND parking_area_id = ? AND is_active = TRUE";
+                
+                $stmt = $this->conn->prepare($query);
+                $stmt->bind_param("ii", $vehicle_id, $parking_area_id);
+                
+                if ($stmt->execute()) {
+                    $this->conn->commit();
+                    return array('success' => true, 'message' => 'Kendaraan berhasil keluar dari area parkir');
+                } else {
+                    $this->conn->rollback();
+                    return array('success' => false, 'message' => 'Error: ' . $stmt->error);
+                }
+            } catch (Exception $e) {
+                $this->conn->rollback();
+                // P4: Deadlock Management - Retry on deadlock
+                if (strpos($e->getMessage(), 'Deadlock') !== false || strpos($e->getMessage(), '1213') !== false) {
+                    $retryCount++;
+                    if ($retryCount >= $maxRetries) {
+                        return array('success' => false, 'message' => 'Deadlock terdeteksi. Silakan coba lagi.');
+                    }
+                    usleep(100000 * $retryCount); // Exponential backoff
+                } else {
+                    return array('success' => false, 'message' => 'Error: ' . $e->getMessage());
+                }
+            }
         }
+        
+        return array('success' => false, 'message' => 'Gagal setelah ' . $maxRetries . ' percobaan');
     }
     
     public function getActiveTransaction($vehicle_id) {
