@@ -1,132 +1,274 @@
-AmanParkir (Proyek UAP)
-----------------------------------------------------------------------------------------
-Proyek ini merupakan sistem manajemen parkir berbasis web yang dibangun menggunakan PHP dan MySQL. Tujuannya untuk membantu pengelolaan kendaraan yang masuk dan keluar area parkir FMIPA secara lebih terstruktur dan efisien. Sistem memanfaatkan konsep MVC (Model-View-Controller), transaksi database, serta monitoring kapasitas parkir secara real-time sehingga petugas dapat mengelola area parkir dengan lebih mudah.
+# 🚗 AmanParkir (Proyek UAP)
 
-Detail Konsep
-------------------------------------------------------
-AmanParkir dirancang untuk mempermudah proses pencatatan kendaraan masuk dan keluar serta pemantauan kapasitas area parkir. Sistem terdiri dari beberapa komponen utama yang saling terhubung melalui arsitektur MVC.
+Proyek ini merupakan sistem manajemen parkir berbasis web yang dibangun menggunakan PHP dan MySQL. Tujuannya untuk membantu pengelolaan kendaraan yang masuk dan keluar area parkir FMIPA secara lebih terstruktur dan efisien.
 
-## Registrasi Kendaraan Masuk
+Sistem ini mengimplementasikan beberapa materi Pemrosesan Data Terdistribusi dan Basis Data Lanjut seperti:
+
+- Login Authentication
+- Stored Procedure
+- Trigger
+- Fragmentasi Data (View)
+- Backup Database
+- Event Scheduler (Task Scheduler)
+
+<img src="ImageParkir/AmanParkir.png">
+
+---
+
+# 📌 Detail Konsep
+
+AmanParkir dirancang untuk mempermudah proses pencatatan kendaraan masuk dan keluar serta pemantauan kapasitas area parkir secara real-time.
+
+---
+
+## 🚪 Login dan Hak Akses
+
+Sistem menyediakan dua role pengguna:
+
+- Admin
+- Petugas
+
+Admin memiliki akses penuh terhadap:
+
+- Dashboard
+- Kendaraan Masuk
+- Kendaraan Keluar
+- Laporan
+- Backup Database
+
+Sedangkan Petugas hanya dapat mengakses:
+
+- Dashboard
+- Kendaraan Masuk
+- Kendaraan Keluar
+
+Implementasi login:
+
+```php
+if($auth->login($_POST['username'], $_POST['password'])){
+    header('Location: index.php');
+    exit;
+}
+```
+
+---
+
+## 🚗 Registrasi Kendaraan Masuk
 
 Fitur ini digunakan untuk mencatat kendaraan yang memasuki area parkir.
 
-Proses yang dilakukan:
+Proses:
 
-Input nomor plat kendaraan.
-Input data pemilik kendaraan.
-Pemilihan area parkir.
-Penyimpanan waktu masuk secara otomatis.
-Validasi kapasitas area parkir.
+- Input nomor plat kendaraan
+- Input data pemilik
+- Pilih area parkir
+- Simpan waktu masuk
+- Validasi kapasitas area
 
-Contoh implementasi:
 ```php
-$vehicle->plate_number = $_POST['plate_number'];
-$vehicle->owner_name = $_POST['owner_name'];
-$vehicle->area_id = $_POST['area_id'];
-
 $transaction->entry_time = date('Y-m-d H:i:s');
 $transaction->save();
 ```
 
-## Registrasi Kendaraan Keluar
+---
 
-Fitur ini digunakan untuk mencatat kendaraan yang meninggalkan area parkir.
+## 🚪 Registrasi Kendaraan Keluar
 
-Proses yang dilakukan:
+Fitur ini digunakan untuk mencatat kendaraan yang keluar dari area parkir.
 
-Mencari kendaraan berdasarkan nomor plat.
-Menampilkan data parkir aktif.
-Menyimpan waktu keluar secara otomatis.
-Menghitung durasi parkir.
+Proses:
 
-Contoh implementasi:
+- Cari kendaraan berdasarkan plat
+- Menampilkan data parkir aktif
+- Menyimpan waktu keluar
+- Menghitung durasi parkir
+
 ```php
-$transaction = ParkingTransaction::findActive($plate_number);
-
 $transaction->exit_time = date('Y-m-d H:i:s');
 $transaction->update();
 ```
 
-##Dashboard Monitoring
+---
 
-Dashboard menampilkan informasi parkir secara real-time, meliputi:
+# ⚙ Stored Procedure
 
-Total kendaraan aktif.
-Kapasitas area parkir.
-Slot yang tersedia.
-Aktivitas parkir terbaru.
+Stored Procedure digunakan untuk menampilkan data kendaraan aktif dan statistik parkir.
 
-Contoh query:
-```php
-SELECT COUNT(*) AS total_active
-FROM parking_transactions
-WHERE exit_time IS NULL;
+<img src="ImageParkir/prosedure.png">
+
+Contoh:
+
+```sql
+CALL GetActiveVehicles();
 ```
 
-## Manajemen Area Parkir
+Procedure ini digunakan untuk mengambil seluruh kendaraan yang masih aktif berada di area parkir.
 
-Sistem menyediakan pengelolaan beberapa area parkir yang memiliki kapasitas berbeda.
+---
 
-Contoh data:
-| Area | Kapasitas |
-|------|-----------|
-| A | 150 |
-| B | 200 |
-| PASCA | 20 |
+# 🔔 Trigger
 
+Trigger digunakan untuk mencatat aktivitas kendaraan masuk dan keluar secara otomatis ke tabel log.
 
-Ketika kapasitas penuh, sistem akan memberikan peringatan dan menolak kendaraan baru untuk area tersebut.
+<img src="ImageParkir/trigger.png">
 
-## Struktur MVC
-Controller
+Trigger yang digunakan:
 
-Mengatur alur logika aplikasi.
-```php
-app/controllers/
-├── HomeController.php
-└── ParkingController.php
+### trg_vehicle_entry
+
+```sql
+AFTER INSERT ON parking_transactions
 ```
 
-Model
+Mencatat kendaraan yang baru masuk.
 
-Mengelola data dan interaksi database.
-```php
-app/models/
-├── ParkingArea.php
-├── ParkingTransaction.php
-└── Vehicle.php
+### trg_vehicle_exit
+
+```sql
+AFTER UPDATE ON parking_transactions
 ```
 
-View
+Mencatat kendaraan yang keluar dari area parkir.
 
-Mengelola tampilan antarmuka pengguna.
-```php
-app/views/
-├── dashboard.php
-├── entry.php
-├── exit.php
-├── header.php
-└── footer.php
+---
+
+# 🧩 Fragmentasi Data
+
+Implementasi fragmentasi dilakukan menggunakan View berdasarkan area parkir.
+
+Contoh:
+
+```sql
+CREATE VIEW area_a_transactions AS
+SELECT *
+FROM parking_transactions pt
+JOIN parking_areas pa
+ON pt.parking_area_id = pa.id
+WHERE pa.area_code='A';
 ```
 
-## Database
+Jenis fragmentasi yang digunakan:
+
+- Fragmentasi Horizontal Area A
+- Fragmentasi Horizontal Area B
+- Fragmentasi Horizontal Area PASCA
+
+---
+
+# ⏰ Task Scheduler (Event Scheduler)
+
+Sistem menggunakan Event Scheduler MySQL untuk menjalankan proses otomatis.
+
+<img src="ImageParkir/Task sceduler.png">
+
+Event yang digunakan:
+
+### daily_vehicle_report
+
+Membuat laporan kendaraan harian secara otomatis.
+
+### delete_old_logs
+
+Menghapus log aktivitas yang berumur lebih dari 30 hari.
+
+---
+
+# 💾 Backup Database
+
+Untuk menjaga keamanan data, sistem menyediakan fitur backup database otomatis menggunakan `mysqldump`.
+
+<img src="ImageParkir/AmanParkir.png">
+
+File backup akan disimpan ke:
+
+```text
+storage/backups/
+```
+
+Contoh nama file:
+
+```text
+amanparkir_backup_2026-06-05_18-48-41.sql
+```
+
+Implementasi:
+
+```php
+exec($command, $output, $result);
+```
+
+Backup hanya dapat dilakukan oleh pengguna dengan role **Admin**.
+
+---
+
+# 🗄 Database
 
 Database yang digunakan:
-```php
-amanparkir
+
+```text
+aman_parkir
 ```
 
 Tabel utama:
-```php
+
+```text
 parking_areas
 vehicle_types
 vehicles
 parking_transactions
+users
 activity_logs
+backup_logs
+daily_statistics
 ```
 
-Relasi database:
+---
 
-- Satu area parkir memiliki banyak kendaraan.
-- Satu kendaraan memiliki banyak transaksi parkir.
-- Setiap transaksi menyimpan waktu masuk dan keluar kendaraan.
+# 📁 Struktur Project
+
+```text
+PDT_UAP-main
+│
+├── app
+│   ├── controllers
+│   ├── models
+│   └── views
+│
+├── config
+│
+├── public
+│   ├── css
+│   ├── login.php
+│   ├── register.php
+│   ├── backup.php
+│   └── logout.php
+│
+├── storage
+│   └── backups
+│
+└── database
+```
+
+---
+
+# 👨‍💻 Teknologi
+
+- PHP
+- MySQL
+- HTML
+- CSS
+- JavaScript
+- Laragon
+
+---
+
+# 🎯 Implementasi Ketentuan UAP
+
+| Ketentuan | Status |
+|------------|---------|
+| Login | ✅ |
+| Trigger | ✅ |
+| Stored Procedure | ✅ |
+| Fragmentasi | ✅ |
+| Backup Database | ✅ |
+| Task Scheduler | ✅ |
