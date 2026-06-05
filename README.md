@@ -1,4 +1,4 @@
-# 🚗 AmanParkir (Proyek UAP)
+# 🏍️ AmanParkir (Proyek UAP)
 
 Proyek ini merupakan sistem manajemen parkir berbasis web yang dibangun menggunakan PHP dan MySQL. Tujuannya untuk membantu pengelolaan kendaraan yang masuk dan keluar area parkir FMIPA secara lebih terstruktur dan efisien.
 
@@ -53,7 +53,7 @@ if($auth->login($_POST['username'], $_POST['password'])){
 
 ---
 
-## 🚗 Registrasi Kendaraan Masuk
+## 🏍️ Registrasi Kendaraan Masuk
 
 Fitur ini digunakan untuk mencatat kendaraan yang memasuki area parkir.
 
