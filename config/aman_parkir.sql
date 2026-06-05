@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 05, 2026 at 01:05 PM
+-- Generation Time: Jun 05, 2026 at 02:16 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -94,6 +94,63 @@ CREATE TABLE `activity_logs` (
 
 INSERT INTO `activity_logs` (`id`, `action_type`, `description`, `user_ip`, `created_at`) VALUES
 (1, 'VEHICLE_ENTRY', 'Vehicle ID 1 entered parking area 1', NULL, '2026-06-05 12:48:45');
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `area_a_transactions`
+-- (See below for the actual view)
+--
+CREATE TABLE `area_a_transactions` (
+`area_code` varchar(50)
+,`area_name` varchar(100)
+,`duration_minutes` int
+,`entry_time` timestamp
+,`exit_time` timestamp
+,`is_active` tinyint(1)
+,`location` varchar(255)
+,`parking_area_id` int
+,`transaction_id` int
+,`vehicle_id` int
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `area_b_transactions`
+-- (See below for the actual view)
+--
+CREATE TABLE `area_b_transactions` (
+`area_code` varchar(50)
+,`area_name` varchar(100)
+,`duration_minutes` int
+,`entry_time` timestamp
+,`exit_time` timestamp
+,`is_active` tinyint(1)
+,`location` varchar(255)
+,`parking_area_id` int
+,`transaction_id` int
+,`vehicle_id` int
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `area_pasca_transactions`
+-- (See below for the actual view)
+--
+CREATE TABLE `area_pasca_transactions` (
+`area_code` varchar(50)
+,`area_name` varchar(100)
+,`duration_minutes` int
+,`entry_time` timestamp
+,`exit_time` timestamp
+,`is_active` tinyint(1)
+,`location` varchar(255)
+,`parking_area_id` int
+,`transaction_id` int
+,`vehicle_id` int
+);
 
 -- --------------------------------------------------------
 
@@ -344,6 +401,33 @@ INSERT INTO `vehicle_types` (`id`, `type_name`, `type_code`) VALUES
 DROP TABLE IF EXISTS `active_transactions`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `active_transactions`  AS SELECT `parking_transactions`.`id` AS `id`, `parking_transactions`.`vehicle_id` AS `vehicle_id`, `parking_transactions`.`parking_area_id` AS `parking_area_id`, `parking_transactions`.`entry_time` AS `entry_time`, `parking_transactions`.`exit_time` AS `exit_time`, `parking_transactions`.`duration_minutes` AS `duration_minutes`, `parking_transactions`.`is_active` AS `is_active`, `parking_transactions`.`created_at` AS `created_at`, `parking_transactions`.`updated_at` AS `updated_at` FROM `parking_transactions` WHERE (`parking_transactions`.`is_active` = true)  ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `area_a_transactions`
+--
+DROP TABLE IF EXISTS `area_a_transactions`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `area_a_transactions`  AS SELECT `pt`.`id` AS `transaction_id`, `pt`.`vehicle_id` AS `vehicle_id`, `pt`.`parking_area_id` AS `parking_area_id`, `pt`.`entry_time` AS `entry_time`, `pt`.`exit_time` AS `exit_time`, `pt`.`duration_minutes` AS `duration_minutes`, `pt`.`is_active` AS `is_active`, `pa`.`area_code` AS `area_code`, `pa`.`area_name` AS `area_name`, `pa`.`location` AS `location` FROM (`parking_transactions` `pt` join `parking_areas` `pa` on((`pt`.`parking_area_id` = `pa`.`id`))) WHERE (`pa`.`area_code` = 'A')  ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `area_b_transactions`
+--
+DROP TABLE IF EXISTS `area_b_transactions`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `area_b_transactions`  AS SELECT `pt`.`id` AS `transaction_id`, `pt`.`vehicle_id` AS `vehicle_id`, `pt`.`parking_area_id` AS `parking_area_id`, `pt`.`entry_time` AS `entry_time`, `pt`.`exit_time` AS `exit_time`, `pt`.`duration_minutes` AS `duration_minutes`, `pt`.`is_active` AS `is_active`, `pa`.`area_code` AS `area_code`, `pa`.`area_name` AS `area_name`, `pa`.`location` AS `location` FROM (`parking_transactions` `pt` join `parking_areas` `pa` on((`pt`.`parking_area_id` = `pa`.`id`))) WHERE (`pa`.`area_code` = 'B')  ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `area_pasca_transactions`
+--
+DROP TABLE IF EXISTS `area_pasca_transactions`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `area_pasca_transactions`  AS SELECT `pt`.`id` AS `transaction_id`, `pt`.`vehicle_id` AS `vehicle_id`, `pt`.`parking_area_id` AS `parking_area_id`, `pt`.`entry_time` AS `entry_time`, `pt`.`exit_time` AS `exit_time`, `pt`.`duration_minutes` AS `duration_minutes`, `pt`.`is_active` AS `is_active`, `pa`.`area_code` AS `area_code`, `pa`.`area_name` AS `area_name`, `pa`.`location` AS `location` FROM (`parking_transactions` `pt` join `parking_areas` `pa` on((`pt`.`parking_area_id` = `pa`.`id`))) WHERE (`pa`.`area_code` = 'PASCA')  ;
 
 -- --------------------------------------------------------
 
