@@ -178,6 +178,7 @@ Menghapus log aktivitas yang berumur lebih dari 30 hari.
 Untuk menjaga keamanan data, sistem menyediakan fitur backup database otomatis menggunakan `mysqldump`.
 
 <img src="ImageParkir/AmanParkir.png">
+<img src="ImageParkir/backup_log.png">
 
 File backup akan disimpan ke:
 
