@@ -223,36 +223,7 @@ backup_logs
 daily_statistics
 ```
 
----
-
-# 📁 Struktur Project
-
-```text
-PDT_UAP-main
-│
-├── app
-│   ├── controllers
-│   ├── models
-│   └── views
-│
-├── config
-│
-├── public
-│   ├── css
-│   ├── login.php
-│   ├── register.php
-│   ├── backup.php
-│   └── logout.php
-│
-├── storage
-│   └── backups
-│
-└── database
-```
-
----
-
-# 👨‍💻 Teknologi
+# 👨‍💻 Penyusun website
 
 - PHP
 - MySQL
