@@ -1,3 +1,8 @@
+<?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -15,11 +20,13 @@
                 <span>AmanParkir</span>
             </div>
             <ul class="navbar-menu">
-                <li><a href="./" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : ''; ?>">Dashboard</a></li>
-                <li><a href="./entry.php" class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'entry') !== false ? 'active' : ''; ?>">Masuk Kendaraan</a></li>
-                <li><a href="./exit.php" class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'exit') !== false ? 'active' : ''; ?>">Keluar Kendaraan</a></li>
-                <li><a href="./reports.php" class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'reports') !== false ? 'active' : ''; ?>">Laporan</a></li>
+                <li><a href="./" class="nav-link">Dashboard</a></li>
+                <li><a href="./entry.php" class="nav-link">Masuk Kendaraan</a></li>
+                <li><a href="./exit.php" class="nav-link">Keluar Kendaraan</a></li>
+                <?php if(isset($_SESSION['role']) && $_SESSION['role'] == 'admin'): ?>
+                <li><a href="./reports.php" class="nav-link">Laporan</a></li>
                 <li><a href="./backup.php" class="nav-link">Backup</a></li>
+                <?php endif; ?>
                 <li><a href="./logout.php" class="nav-link">Logout</a></li>
             </ul>
         </div>
