@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 05, 2026 at 02:16 PM
+-- Generation Time: Jun 05, 2026 at 03:32 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -51,6 +51,32 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `GetParkingStatistics` ()   BEGIN
     LEFT JOIN parking_transactions pt
         ON pa.id = pt.parking_area_id
     GROUP BY pa.id;
+
+END$$
+
+--
+-- Functions
+--
+CREATE DEFINER=`root`@`localhost` FUNCTION `HitungDurasiParkir` (`waktu_masuk` DATETIME, `waktu_keluar` DATETIME) RETURNS INT DETERMINISTIC BEGIN
+
+    RETURN TIMESTAMPDIFF(
+        MINUTE,
+        waktu_masuk,
+        waktu_keluar
+    );
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `TotalKendaraanAktif` () RETURNS INT READS SQL DATA BEGIN
+
+    DECLARE total INT;
+
+    SELECT COUNT(*)
+    INTO total
+    FROM parking_transactions
+    WHERE is_active = 1;
+
+    RETURN total;
 
 END$$
 
