@@ -139,12 +139,24 @@ Implementasi fragmentasi dilakukan menggunakan View berdasarkan area parkir.
 Contoh:
 
 ```sql
-CREATE VIEW area_a_transactions AS
-SELECT *
+CREATE OR REPLACE VIEW area_a_transactions AS
+SELECT
+    pt.id AS transaction_id,
+    pt.vehicle_id,
+    pt.parking_area_id,
+    pt.entry_time,
+    pt.exit_time,
+    pt.duration_minutes,
+    pt.is_active,
+
+    pa.area_code,
+    pa.area_name,
+    pa.location
+
 FROM parking_transactions pt
 JOIN parking_areas pa
-ON pt.parking_area_id = pa.id
-WHERE pa.area_code='A';
+    ON pt.parking_area_id = pa.id
+WHERE pa.area_code = 'A';
 ```
 
 Jenis fragmentasi yang digunakan:
