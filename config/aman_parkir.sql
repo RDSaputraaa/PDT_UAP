@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 05, 2026 at 12:31 PM
+-- Generation Time: Jun 05, 2026 at 01:05 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -20,6 +20,41 @@ SET time_zone = "+00:00";
 --
 -- Database: `aman_parkir`
 --
+
+DELIMITER $$
+--
+-- Procedures
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetActiveVehicles` ()   BEGIN
+
+    SELECT
+        pt.id,
+        v.plate_number,
+        pa.area_name,
+        pt.entry_time
+    FROM parking_transactions pt
+    JOIN vehicles v
+        ON pt.vehicle_id = v.id
+    JOIN parking_areas pa
+        ON pt.parking_area_id = pa.id
+    WHERE pt.is_active = 1;
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetParkingStatistics` ()   BEGIN
+
+    SELECT
+        pa.area_code,
+        pa.area_name,
+        COUNT(pt.id) AS total_motorcycles
+    FROM parking_areas pa
+    LEFT JOIN parking_transactions pt
+        ON pa.id = pt.parking_area_id
+    GROUP BY pa.id;
+
+END$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -52,6 +87,13 @@ CREATE TABLE `activity_logs` (
   `user_ip` varchar(45) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `activity_logs`
+--
+
+INSERT INTO `activity_logs` (`id`, `action_type`, `description`, `user_ip`, `created_at`) VALUES
+(1, 'VEHICLE_ENTRY', 'Vehicle ID 1 entered parking area 1', NULL, '2026-06-05 12:48:45');
 
 -- --------------------------------------------------------
 
@@ -175,6 +217,13 @@ CREATE TABLE `parking_transactions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
+-- Dumping data for table `parking_transactions`
+--
+
+INSERT INTO `parking_transactions` (`id`, `vehicle_id`, `parking_area_id`, `entry_time`, `exit_time`, `duration_minutes`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, '2026-06-05 12:48:45', NULL, NULL, 1, '2026-06-05 12:48:45', '2026-06-05 12:48:45');
+
+--
 -- Triggers `parking_transactions`
 --
 DELIMITER $$
@@ -260,6 +309,13 @@ CREATE TABLE `vehicles` (
   `owner_email` varchar(100) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `vehicles`
+--
+
+INSERT INTO `vehicles` (`id`, `plate_number`, `vehicle_type_id`, `owner_name`, `owner_phone`, `owner_email`, `created_at`) VALUES
+(1, 'BE 1209 GB', 1, 'Sunarno', '0899-7722-1212', 'sunarno@gmail.com', '2026-06-05 12:48:45');
 
 -- --------------------------------------------------------
 
@@ -377,7 +433,7 @@ ALTER TABLE `vehicle_types`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `backup_logs`
@@ -401,7 +457,7 @@ ALTER TABLE `parking_areas`
 -- AUTO_INCREMENT for table `parking_transactions`
 --
 ALTER TABLE `parking_transactions`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -413,7 +469,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `vehicles`
 --
 ALTER TABLE `vehicles`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `vehicle_types`
