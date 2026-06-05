@@ -105,7 +105,6 @@ require_once __DIR__ . '/header.php';
             <p class="area-location"><i class="fas fa-map-marker-alt"></i> <?php echo htmlspecialchars($area['location']); ?></p>
             <div class="capacity-simple">
                 <div><i class="fas fa-motorcycle"></i> Motor: <?php echo $area['motorcycle_capacity']; ?> slot</div>
-                <div><i class="fas fa-car-side"></i> Mobil: <?php echo $area['car_capacity']; ?> slot</div>
             </div>
         </div>
         <?php endforeach; ?>
