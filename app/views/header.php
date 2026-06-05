@@ -19,6 +19,8 @@
                 <li><a href="./entry.php" class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'entry') !== false ? 'active' : ''; ?>">Masuk Kendaraan</a></li>
                 <li><a href="./exit.php" class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'exit') !== false ? 'active' : ''; ?>">Keluar Kendaraan</a></li>
                 <li><a href="./reports.php" class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'reports') !== false ? 'active' : ''; ?>">Laporan</a></li>
+                <li><a href="./backup_list.php" class="nav-link">Backup</a></li>
+                <li><a href="./logout.php" class="nav-link">Logout</a></li>
             </ul>
         </div>
     </nav>
