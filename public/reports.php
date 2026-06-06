@@ -93,4 +93,4 @@ $allAreas = $parkingArea->getAll();
     <?php endif; ?>
 </section>
 
-<?php require_once __DIR__ . '/../../app/views/footer.php'; ?>
+<?php require_once dirname(__DIR__) . '/app/views/footer.php'; ?>
